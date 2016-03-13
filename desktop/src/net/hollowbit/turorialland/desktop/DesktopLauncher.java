@@ -3,11 +3,12 @@ package net.hollowbit.turorialland.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import net.hollowbit.turorialland.SpaceGame;
+import net.hollowbit.spacegame.Game;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new SpaceGame(), config);
+		config.foregroundFPS = 60;
+		new LwjglApplication(new Game(), config);
 	}
 }
