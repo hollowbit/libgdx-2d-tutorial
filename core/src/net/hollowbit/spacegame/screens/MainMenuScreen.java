@@ -40,7 +40,7 @@ public class MainMenuScreen implements Screen {
 	public void render (float delta) {
 		
 		
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		game.batch.begin();
 		
@@ -48,6 +48,9 @@ public class MainMenuScreen implements Screen {
 		int x = SpaceGame.WIDTH / 2 - EXIT_BUTTON_WIDTH / 2;
 		if (Gdx.input.getX() < x + EXIT_BUTTON_WIDTH && Gdx.input.getX() > x && SpaceGame.HEIGHT - Gdx.input.getY() < EXIT_BUTTON_Y + EXIT_BUTTON_HEIGHT && SpaceGame.HEIGHT - Gdx.input.getY() > EXIT_BUTTON_Y) {
 			game.batch.draw(exitButtonActive, x, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
+			if (Gdx.input.isTouched()) {
+				Gdx.app.exit();
+			}
 		} else {
 			game.batch.draw(exitButtonInactive, x, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
 		}
@@ -55,6 +58,10 @@ public class MainMenuScreen implements Screen {
 		x = SpaceGame.WIDTH / 2 - PLAY_BUTTON_WIDTH / 2;
 		if (Gdx.input.getX() < x + PLAY_BUTTON_WIDTH && Gdx.input.getX() > x && SpaceGame.HEIGHT - Gdx.input.getY() < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && SpaceGame.HEIGHT - Gdx.input.getY() > PLAY_BUTTON_Y) {
 			game.batch.draw(playButtonActive, x, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
+			if (Gdx.input.isTouched()) {
+				this.dispose();
+				game.setScreen(new MainGameScreen(game));
+			}
 		} else {
 			game.batch.draw(playButtonInactive, x, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
 		}
