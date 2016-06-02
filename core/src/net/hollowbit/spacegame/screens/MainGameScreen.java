@@ -20,7 +20,7 @@ public class MainGameScreen implements Screen {
 	public static final int SHIP_WIDTH = SHIP_WIDTH_PIXEL * 3;
 	public static final int SHIP_HEIGHT = SHIP_HEIGHT_PIXEL * 3;
 	
-	public static final float ROLL_TIMER_SWITCH_TIME = 0.15f;
+	public static final float ROLL_TIMER_SWITCH_TIME = 0.25f;
 	
 	Animation[] rolls;
 	
@@ -63,14 +63,26 @@ public class MainGameScreen implements Screen {
 			if (x < 0)
 				x = 0;
 			
-			//Update roll
-			rollTimer -= Gdx.graphics.getDeltaTime();
-			if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME) {
+			//Update roll if button just clicked
+			if (Gdx.input.isKeyJustPressed(Keys.LEFT) && !Gdx.input.isKeyPressed(Keys.RIGHT) && roll > 0) {
 				rollTimer = 0;
 				roll--;
-				
-				if (roll < 0)
-					roll = 0;
+			}
+			
+			//Update roll
+			rollTimer -= Gdx.graphics.getDeltaTime();
+			if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll > 0) {
+				rollTimer = 0;
+				roll--;
+			}
+		} else {
+			if (roll < 2) {
+				//Update roll to make it go back to center
+				rollTimer += Gdx.graphics.getDeltaTime();
+				if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll < 4) {
+					rollTimer = 0;
+					roll++;
+				}
 			}
 		}
 		
@@ -82,12 +94,18 @@ public class MainGameScreen implements Screen {
 			
 			//Update roll
 			rollTimer += Gdx.graphics.getDeltaTime();
-			if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME) {
+			if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll < 4) {
 				rollTimer = 0;
 				roll++;
-				
-				if (roll > 4)
-					roll = 4;
+			}
+		} else {
+			if (roll > 2) {
+				//Update roll
+				rollTimer -= Gdx.graphics.getDeltaTime();
+				if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll > 0) {
+					rollTimer = 0;
+					roll--;
+				}
 			}
 		}
 		
