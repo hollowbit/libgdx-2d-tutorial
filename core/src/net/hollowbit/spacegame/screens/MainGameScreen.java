@@ -1,5 +1,7 @@
 package net.hollowbit.spacegame.screens;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
@@ -9,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import net.hollowbit.spacegame.SpaceGame;
+import net.hollowbit.spacegame.entities.Bullet;
 
 public class MainGameScreen implements Screen {
 	
@@ -32,10 +35,13 @@ public class MainGameScreen implements Screen {
 	
 	SpaceGame game;
 	
+	ArrayList<Bullet> bullets;
+	
 	public MainGameScreen (SpaceGame game) {
 		this.game = game;
 		y = 15;
 		x = SpaceGame.WIDTH / 2 - SHIP_WIDTH / 2;
+		bullets = new ArrayList<Bullet>();
 		
 		roll = 2;
 		rollTimer = 0;
@@ -57,6 +63,22 @@ public class MainGameScreen implements Screen {
 
 	@Override
 	public void render (float delta) {
+		//Shooting code
+		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+			bullets.add(new Bullet(x + 4));
+			bullets.add(new Bullet(x + SHIP_WIDTH - 4));
+		}
+		
+		//Update bullets
+		ArrayList<Bullet> bulletsToRemove = new ArrayList<Bullet>();
+		for (Bullet bullet : bullets) {
+			bullet.update(delta);
+			if (bullet.remove)
+				bulletsToRemove.add(bullet);
+		}
+		bullets.removeAll(bulletsToRemove);
+		
+		//Movement code
 		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
 			x -= SPEED * Gdx.graphics.getDeltaTime();
 			
@@ -114,6 +136,10 @@ public class MainGameScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		game.batch.begin();
+		
+		for (Bullet bullet : bullets) {
+			bullet.render(game.batch);
+		}
 		
 		game.batch.draw(rolls[roll].getKeyFrame(stateTime, true), x, y, SHIP_WIDTH, SHIP_HEIGHT);
 		
