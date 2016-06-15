@@ -24,6 +24,7 @@ public class MainGameScreen implements Screen {
 	public static final int SHIP_HEIGHT = SHIP_HEIGHT_PIXEL * 3;
 	
 	public static final float ROLL_TIMER_SWITCH_TIME = 0.25f;
+	public static final float SHOOT_WAIT_TIME = 0.3f;
 	
 	Animation[] rolls;
 	
@@ -32,6 +33,7 @@ public class MainGameScreen implements Screen {
 	int roll;
 	float rollTimer;
 	float stateTime;
+	float shootTimer;
 	
 	SpaceGame game;
 	
@@ -42,6 +44,8 @@ public class MainGameScreen implements Screen {
 		y = 15;
 		x = SpaceGame.WIDTH / 2 - SHIP_WIDTH / 2;
 		bullets = new ArrayList<Bullet>();
+		
+		shootTimer = 0;
 		
 		roll = 2;
 		rollTimer = 0;
@@ -64,9 +68,19 @@ public class MainGameScreen implements Screen {
 	@Override
 	public void render (float delta) {
 		//Shooting code
-		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-			bullets.add(new Bullet(x + 4));
-			bullets.add(new Bullet(x + SHIP_WIDTH - 4));
+		shootTimer += delta;
+		if (Gdx.input.isKeyPressed(Keys.SPACE) && shootTimer >= SHOOT_WAIT_TIME) {
+			shootTimer = 0;
+			
+			int offset = 4;
+			if (roll == 1 || roll == 3)//Slightly tilted
+				offset = 8;
+			
+			if (roll == 0 || roll == 4)//Fully tilted
+				offset = 16;
+			
+			bullets.add(new Bullet(x + offset));
+			bullets.add(new Bullet(x + SHIP_WIDTH - offset));
 		}
 		
 		//Update bullets
@@ -79,7 +93,7 @@ public class MainGameScreen implements Screen {
 		bullets.removeAll(bulletsToRemove);
 		
 		//Movement code
-		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+		if (Gdx.input.isKeyPressed(Keys.LEFT)) {//Left
 			x -= SPEED * Gdx.graphics.getDeltaTime();
 			
 			if (x < 0)
@@ -94,7 +108,7 @@ public class MainGameScreen implements Screen {
 			//Update roll
 			rollTimer -= Gdx.graphics.getDeltaTime();
 			if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll > 0) {
-				rollTimer = 0;
+				rollTimer -= ROLL_TIMER_SWITCH_TIME;
 				roll--;
 			}
 		} else {
@@ -102,22 +116,28 @@ public class MainGameScreen implements Screen {
 				//Update roll to make it go back to center
 				rollTimer += Gdx.graphics.getDeltaTime();
 				if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll < 4) {
-					rollTimer = 0;
+					rollTimer -= ROLL_TIMER_SWITCH_TIME;
 					roll++;
 				}
 			}
 		}
 		
-		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {//Right
 			x += SPEED * Gdx.graphics.getDeltaTime();
 			
 			if (x + SHIP_WIDTH > Gdx.graphics.getWidth())
 				x = Gdx.graphics.getWidth() - SHIP_WIDTH;
 			
+			//Update roll if button just clicked
+			if (Gdx.input.isKeyJustPressed(Keys.RIGHT) && !Gdx.input.isKeyPressed(Keys.LEFT) && roll > 0) {
+				rollTimer = 0;
+				roll--;
+			}
+			
 			//Update roll
 			rollTimer += Gdx.graphics.getDeltaTime();
 			if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll < 4) {
-				rollTimer = 0;
+				rollTimer -= ROLL_TIMER_SWITCH_TIME;
 				roll++;
 			}
 		} else {
@@ -125,7 +145,7 @@ public class MainGameScreen implements Screen {
 				//Update roll
 				rollTimer -= Gdx.graphics.getDeltaTime();
 				if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll > 0) {
-					rollTimer = 0;
+					rollTimer -= ROLL_TIMER_SWITCH_TIME;
 					roll--;
 				}
 			}
