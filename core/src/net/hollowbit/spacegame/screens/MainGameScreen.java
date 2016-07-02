@@ -9,6 +9,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import net.hollowbit.spacegame.SpaceGame;
@@ -48,12 +50,19 @@ public class MainGameScreen implements Screen {
 	ArrayList<Bullet> bullets;
 	ArrayList<Asteroid> asteroids;
 	
+	BitmapFont scoreFont;
+	
+	int score;
+	
 	public MainGameScreen (SpaceGame game) {
 		this.game = game;
 		y = 15;
 		x = SpaceGame.WIDTH / 2 - SHIP_WIDTH / 2;
 		bullets = new ArrayList<Bullet>();
 		asteroids = new ArrayList<Asteroid>();
+		scoreFont = new BitmapFont(Gdx.files.internal("fonts/score.fnt"));
+		
+		score = 0;
 		
 		random = new Random();
 		asteroidSpawnTimer = random.nextFloat() * (MAX_ASTEROID_SPAWN_TIME - MIN_ASTEROID_SPAWN_TIME) + MIN_ASTEROID_SPAWN_TIME;
@@ -110,7 +119,6 @@ public class MainGameScreen implements Screen {
 			if (asteroid.remove)
 				asteroidsToRemove.add(asteroid);
 		}
-		asteroids.removeAll(asteroidsToRemove);
 		
 		//Update bullets
 		ArrayList<Bullet> bulletsToRemove = new ArrayList<Bullet>();
@@ -119,7 +127,6 @@ public class MainGameScreen implements Screen {
 			if (bullet.remove)
 				bulletsToRemove.add(bullet);
 		}
-		bullets.removeAll(bulletsToRemove);
 		
 		//Movement code
 		if (Gdx.input.isKeyPressed(Keys.LEFT)) {//Left
@@ -180,11 +187,27 @@ public class MainGameScreen implements Screen {
 			}
 		}
 		
+		//After all updates, check for collisions
+		for (Bullet bullet : bullets) {
+			for (Asteroid asteroid : asteroids) {
+				if (bullet.getCollisionRect().collidesWith(asteroid.getCollisionRect())) {//Collision occured
+					bulletsToRemove.add(bullet);
+					asteroidsToRemove.add(asteroid);
+					score += 100;
+				}
+			}
+		}
+		asteroids.removeAll(asteroidsToRemove);
+		bullets.removeAll(bulletsToRemove);
+		
 		stateTime += delta;
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		game.batch.begin();
+		
+		GlyphLayout scoreLayout = new GlyphLayout(scoreFont, "" + score);
+		scoreFont.draw(game.batch, scoreLayout, Gdx.graphics.getWidth() / 2 - scoreLayout.width / 2, Gdx.graphics.getHeight() - scoreLayout.height - 10);
 		
 		for (Bullet bullet : bullets) {
 			bullet.render(game.batch);
