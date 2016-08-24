@@ -95,6 +95,8 @@ public class MainGameScreen implements Screen {
 		rolls[2] = new Animation(SHIP_ANIMATION_SPEED, rollSpriteSheet[0]);//No tilt
 		rolls[3] = new Animation(SHIP_ANIMATION_SPEED, rollSpriteSheet[3]);
 		rolls[4] = new Animation(SHIP_ANIMATION_SPEED, rollSpriteSheet[4]);//Right
+		
+		game.scrollingBackground.setSpeedFixed(false);
 	}
 	
 	@Override
@@ -247,6 +249,8 @@ public class MainGameScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		game.batch.begin();
+		
+		game.scrollingBackground.updateAndRender(delta, game.batch);
 		
 		GlyphLayout scoreLayout = new GlyphLayout(scoreFont, "" + score);
 		scoreFont.draw(game.batch, scoreLayout, Gdx.graphics.getWidth() / 2 - scoreLayout.width / 2, Gdx.graphics.getHeight() - scoreLayout.height - 10);

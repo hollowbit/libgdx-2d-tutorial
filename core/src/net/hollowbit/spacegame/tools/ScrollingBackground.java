@@ -12,10 +12,9 @@ public class ScrollingBackground {
 	
 	Texture image;
 	float y1, y2;
-	float imageScale;
 	int speed;//In pixels / second
 	int goalSpeed;
-	
+	float imageScale;
 	boolean speedFixed;
 	
 	public ScrollingBackground () {
@@ -23,14 +22,14 @@ public class ScrollingBackground {
 		
 		y1 = 0;
 		y2 = image.getHeight();
-		imageScale = 0;
-		speed = DEFAULT_SPEED;
+		speed = 0;
 		goalSpeed = DEFAULT_SPEED;
+		imageScale = 0;
 		speedFixed = true;
 	}
 	
 	public void updateAndRender (float deltaTime, SpriteBatch batch) {
-		//Update speed
+		//Speed adjustment to reach goal
 		if (speed < goalSpeed) {
 			speed += GOAL_REACH_ACCELERATION * deltaTime;
 			if (speed > goalSpeed)
@@ -44,10 +43,10 @@ public class ScrollingBackground {
 		if (!speedFixed)
 			speed += ACCELERATION * deltaTime;
 		
-		y1 -= deltaTime * speed;
-		y2 -= deltaTime * speed;
+		y1 -= speed * deltaTime;
+		y2 -= speed * deltaTime;
 		
-		//If image reaches bottom of screen and is no longer visible, move it to the top
+		//if image reached the bottom of screen and is not visible, put it back on top
 		if (y1 + image.getHeight() * imageScale <= 0)
 			y1 = y2 + image.getHeight() * imageScale;
 		
@@ -60,11 +59,11 @@ public class ScrollingBackground {
 	}
 	
 	public void resize (int width, int height) {
-		imageScale = Gdx.graphics.getWidth() / image.getWidth();
+		imageScale = width / image.getWidth();
 	}
 	
-	public void setSpeed (int speedInPixelsPerSecond) {
-		this.goalSpeed = speedInPixelsPerSecond;
+	public void setSpeed (int goalSpeed) {
+		this.goalSpeed = goalSpeed;
 	}
 	
 	public void setSpeedFixed (boolean speedFixed) {
