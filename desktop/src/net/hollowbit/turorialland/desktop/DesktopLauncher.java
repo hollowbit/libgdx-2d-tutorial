@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		config.foregroundFPS = 60;
 		config.width = SpaceGame.WIDTH;
 		config.height = SpaceGame.HEIGHT;
-		config.resizable = false;
+		config.resizable = true;
 		new LwjglApplication(new SpaceGame(), config);
 	}
 }

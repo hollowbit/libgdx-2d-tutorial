@@ -55,6 +55,7 @@ public class MainGameScreen implements Screen {
 	ArrayList<Explosion> explosions;
 	
 	Texture blank;
+	Texture controls;
 	
 	BitmapFont scoreFont;
 	
@@ -76,6 +77,8 @@ public class MainGameScreen implements Screen {
 		playerRect = new CollisionRect(0, 0, SHIP_WIDTH, SHIP_HEIGHT);
 		
 		blank = new Texture("blank.png");
+		if (SpaceGame.IS_MOBILE)
+			controls = new Texture("controls.png");
 		
 		score = 0;
 		
@@ -108,7 +111,7 @@ public class MainGameScreen implements Screen {
 	public void render (float delta) {
 		//Shooting code
 		shootTimer += delta;
-		if (Gdx.input.isKeyPressed(Keys.SPACE) && shootTimer >= SHOOT_WAIT_TIME) {
+		if ((isRight() || isLeft()) && shootTimer >= SHOOT_WAIT_TIME) {
 			shootTimer = 0;
 			
 			int offset = 4;
@@ -155,14 +158,14 @@ public class MainGameScreen implements Screen {
 		explosions.removeAll(explosionsToRemove);
 		
 		//Movement code
-		if (Gdx.input.isKeyPressed(Keys.LEFT)) {//Left
+		if (isLeft()) {//Left
 			x -= SPEED * Gdx.graphics.getDeltaTime();
 			
 			if (x < 0)
 				x = 0;
 			
 			//Update roll if button just clicked
-			if (Gdx.input.isKeyJustPressed(Keys.LEFT) && !Gdx.input.isKeyPressed(Keys.RIGHT) && roll > 0) {
+			if (isJustLeft() && !isRight() && roll > 0) {
 				rollTimer = 0;
 				roll--;
 			}
@@ -184,14 +187,14 @@ public class MainGameScreen implements Screen {
 			}
 		}
 		
-		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {//Right
+		if (isRight()) {//Right
 			x += SPEED * Gdx.graphics.getDeltaTime();
 			
 			if (x + SHIP_WIDTH > Gdx.graphics.getWidth())
 				x = Gdx.graphics.getWidth() - SHIP_WIDTH;
 			
 			//Update roll if button just clicked
-			if (Gdx.input.isKeyJustPressed(Keys.RIGHT) && !Gdx.input.isKeyPressed(Keys.LEFT) && roll > 0) {
+			if (isJustRight() && !isLeft() && roll > 0) {
 				rollTimer = 0;
 				roll--;
 			}
@@ -280,9 +283,37 @@ public class MainGameScreen implements Screen {
 		
 		game.batch.draw(rolls[roll].getKeyFrame(stateTime, true), x, y, SHIP_WIDTH, SHIP_HEIGHT);
 		
+		if (SpaceGame.IS_MOBILE) {
+			//Draw left
+			game.batch.setColor(Color.RED);
+			game.batch.draw(controls, 0, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, 0, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, false, false);
+
+			//Draw right
+			game.batch.setColor(Color.BLUE);
+			game.batch.draw(controls, SpaceGame.WIDTH / 2, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, 0, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, true, false);
+			
+			game.batch.setColor(Color.WHITE);
+		}
+		
 		game.batch.end();
 	}
-
+	
+	private boolean isRight () {
+		return Gdx.input.isKeyPressed(Keys.RIGHT) || (Gdx.input.isTouched() && Gdx.input.getX() >= SpaceGame.WIDTH / 2);
+	}
+	
+	private boolean isLeft () {
+		return Gdx.input.isKeyPressed(Keys.LEFT) || (Gdx.input.isTouched() && Gdx.input.getX() < SpaceGame.WIDTH / 2);
+	}
+	
+	private boolean isJustRight () {
+		return Gdx.input.isKeyJustPressed(Keys.RIGHT) || (Gdx.input.justTouched() && Gdx.input.getX() >= SpaceGame.WIDTH / 2);
+	}
+	
+	private boolean isJustLeft () {
+		return Gdx.input.isKeyJustPressed(Keys.LEFT) || (Gdx.input.justTouched() && Gdx.input.getX() < SpaceGame.WIDTH / 2);
+	}
+	
 	@Override
 	public void resize (int width, int height) {
 		
