@@ -1,9 +1,9 @@
 package net.hollowbit.spacegame.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import net.hollowbit.spacegame.SpaceGame;
 import net.hollowbit.spacegame.tools.CollisionRect;
 
 public class Bullet {
@@ -29,7 +29,7 @@ public class Bullet {
 	
 	public void update (float deltaTime) {
 		y += SPEED * deltaTime;
-		if (y > Gdx.graphics.getHeight())
+		if (y > SpaceGame.HEIGHT)
 			remove = true;
 		
 		rect.move(x, y);
