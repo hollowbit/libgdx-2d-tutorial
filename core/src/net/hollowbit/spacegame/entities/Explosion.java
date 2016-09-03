@@ -9,7 +9,8 @@ public class Explosion {
 	
 	public static final float FRAME_LENGTH = 0.2f;
 	public static final int OFFSET = 8;
-	public static final int SIZE = 32;
+	public static final int SIZE = 64;
+	public static final int IMAGE_SIZE = 32;
 	
 	private static Animation anim = null;
 	float x, y;
@@ -23,7 +24,7 @@ public class Explosion {
 		statetime = 0;
 		
 		if (anim == null)
-			anim = new Animation(FRAME_LENGTH, TextureRegion.split(new Texture("explosion.png"), SIZE, SIZE)[0]);
+			anim = new Animation(FRAME_LENGTH, TextureRegion.split(new Texture("explosion.png"), IMAGE_SIZE, IMAGE_SIZE)[0]);
 	}
 	
 	public void update (float deltatime) {
@@ -33,7 +34,7 @@ public class Explosion {
 	}
 	
 	public void render (SpriteBatch batch) {
-		batch.draw(anim.getKeyFrame(statetime), x, y);
+		batch.draw(anim.getKeyFrame(statetime), x, y, SIZE, SIZE);
 	}
 	
 }

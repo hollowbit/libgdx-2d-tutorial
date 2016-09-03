@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Align;
 
 import net.hollowbit.spacegame.SpaceGame;
 import net.hollowbit.spacegame.entities.Asteroid;
@@ -33,8 +34,8 @@ public class MainGameScreen implements Screen {
 	public static final float ROLL_TIMER_SWITCH_TIME = 0.25f;
 	public static final float SHOOT_WAIT_TIME = 0.3f;
 	
-	public static final float MIN_ASTEROID_SPAWN_TIME = 0.3f;
-	public static final float MAX_ASTEROID_SPAWN_TIME = 0.6f;
+	public static final float MIN_ASTEROID_SPAWN_TIME = 0.05f;
+	public static final float MAX_ASTEROID_SPAWN_TIME = 0.1f;
 	
 	Animation[] rolls;
 	
@@ -64,6 +65,8 @@ public class MainGameScreen implements Screen {
 	float health = 1;//0 = dead, 1 = full health
 	
 	int score;
+	
+	boolean showControls = true;
 	
 	public MainGameScreen (SpaceGame game) {
 		this.game = game;
@@ -113,6 +116,9 @@ public class MainGameScreen implements Screen {
 		shootTimer += delta;
 		if ((isRight() || isLeft()) && shootTimer >= SHOOT_WAIT_TIME) {
 			shootTimer = 0;
+			
+			//Stop showing controls when a shot has been shot
+			showControls = false;
 			
 			int offset = 4;
 			if (roll == 1 || roll == 3)//Slightly tilted
@@ -283,16 +289,22 @@ public class MainGameScreen implements Screen {
 		
 		game.batch.draw(rolls[roll].getKeyFrame(stateTime, true), x, y, SHIP_WIDTH, SHIP_HEIGHT);
 		
-		if (SpaceGame.IS_MOBILE) {
-			//Draw left
-			game.batch.setColor(Color.RED);
-			game.batch.draw(controls, 0, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, 0, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, false, false);
-
-			//Draw right
-			game.batch.setColor(Color.BLUE);
-			game.batch.draw(controls, SpaceGame.WIDTH / 2, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, 0, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, true, false);
-			
-			game.batch.setColor(Color.WHITE);
+		//Draw controls instructions
+		if (showControls) {
+			if (SpaceGame.IS_MOBILE) {
+				//Draw left
+				game.batch.setColor(Color.RED);
+				game.batch.draw(controls, 0, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, 0, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, false, false);
+	
+				//Draw right
+				game.batch.setColor(Color.BLUE);
+				game.batch.draw(controls, SpaceGame.WIDTH / 2, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, 0, 0, SpaceGame.WIDTH / 2, SpaceGame.HEIGHT, true, false);
+				
+				game.batch.setColor(Color.WHITE);
+			} else {
+				GlyphLayout instructionsLayout = new GlyphLayout(scoreFont, "Press Left/Right Arrowkeys to Shoot!", Color.WHITE, SpaceGame.WIDTH - 50, Align.center, true);
+				scoreFont.draw(game.batch, instructionsLayout, SpaceGame.WIDTH / 2 - instructionsLayout.width / 2, 150);
+			}
 		}
 		
 		game.batch.end();

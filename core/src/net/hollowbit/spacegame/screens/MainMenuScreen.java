@@ -17,6 +17,9 @@ public class MainMenuScreen implements Screen {
 	private static final int PLAY_BUTTON_HEIGHT = 120;
 	private static final int EXIT_BUTTON_Y = 100;
 	private static final int PLAY_BUTTON_Y = 230;
+	private static final int LOGO_WIDTH = 400;
+	private static final int LOGO_HEIGHT = 250;
+	private static final int LOGO_Y = 450;
 	
 	final SpaceGame game;
 	
@@ -24,6 +27,7 @@ public class MainMenuScreen implements Screen {
 	Texture playButtonInactive;
 	Texture exitButtonActive;
 	Texture exitButtonInactive;
+	Texture logo;
 	
 	public MainMenuScreen (final SpaceGame game) {
 		this.game = game;
@@ -31,6 +35,7 @@ public class MainMenuScreen implements Screen {
 		playButtonInactive = new Texture("play_button_inactive.png");
 		exitButtonActive = new Texture("exit_button_active.png");
 		exitButtonInactive = new Texture("exit_button_inactive.png");
+		logo = new Texture("logo.png");
 		
 		game.scrollingBackground.setSpeedFixed(true);
 		game.scrollingBackground.setSpeed(ScrollingBackground.DEFAULT_SPEED);
@@ -74,7 +79,6 @@ public class MainMenuScreen implements Screen {
 		
 		game.scrollingBackground.updateAndRender(delta, game.batch);
 		
-		
 		int x = SpaceGame.WIDTH / 2 - EXIT_BUTTON_WIDTH / 2;
 		if (game.cam.getInputInGameWorld().x < x + EXIT_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > x && SpaceGame.HEIGHT - game.cam.getInputInGameWorld().y < EXIT_BUTTON_Y + EXIT_BUTTON_HEIGHT && SpaceGame.HEIGHT - game.cam.getInputInGameWorld().y > EXIT_BUTTON_Y) {
 			game.batch.draw(exitButtonActive, x, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
@@ -88,6 +92,8 @@ public class MainMenuScreen implements Screen {
 		} else {
 			game.batch.draw(playButtonInactive, x, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
 		}
+		
+		game.batch.draw(logo, SpaceGame.WIDTH / 2 - LOGO_WIDTH / 2, LOGO_Y, LOGO_WIDTH, LOGO_HEIGHT);
 		
 		game.batch.end();
 	}
